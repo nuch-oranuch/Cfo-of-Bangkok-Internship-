@@ -1,0 +1,833 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CFO Neumorphism – Bangkok Hospital</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;500;600;700&family=Noto+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --sidenav:#012351; --sidenav-active:#16479A; --bg:#6B7280; --primary:#0C4DD2; --border:#E2E8F0;
+  --success:#087550; --warning:#945C00; --danger:#B42332; --canvas:#F8FAFC; --surface:#FFFFFF;
+  --text:#102B4B; --sub:#6B7280; --info:#1248B5; --purple:#6D28D9;
+  --s1:#0C4DD2; --s2:#FFA500; --s3:#6D28D9;
+  --success-bg:#E3F4EC; --warning-bg:#FFF4DB; --danger-bg:#FCE7EA; --info-bg:#E6EEFF; --purple-bg:#EFE8FD;
+  --r-sm:6px; --r-btn:10px; --r-card:12px; --r-lg:16px;
+  --font:"Noto Sans Thai","Noto Sans","Leelawadee UI",Tahoma,Arial,sans-serif;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%}
+body{font-family:var(--font);font-size:16px;line-height:1.6;color:var(--text);background:var(--canvas)}
+h1,h2,h3{line-height:1.35;margin:0}
+button,input,select{font-family:inherit;font-size:inherit;color:inherit}
+:focus-visible{outline:3px solid #7FA6F5;outline-offset:2px}
+
+/* ---------- Layout ---------- */
+.app{display:flex;min-height:100vh}
+.sidebar{width:240px;flex:0 0 240px;background:var(--sidenav);color:#fff;position:sticky;top:0;height:100vh;display:flex;flex-direction:column;overflow-y:auto}
+.brand{display:flex;flex-direction:column;align-items:center;padding:28px 16px 20px;border-bottom:1px solid rgba(255,255,255,.12)}
+.brand-row{display:flex;align-items:center;gap:12px}
+.brand-logo{width:40px;height:40px}
+.brand-name{font-family:"Noto Sans",sans-serif;font-weight:700;font-size:20px;line-height:1.15;letter-spacing:.3px}
+.brand-sub{font-size:12px;color:#C9D6EE;margin-top:10px;text-align:center}
+.nav{padding:16px}
+.nav-label{font-size:12px;color:#9FB3D9;padding:0 12px 8px}
+.nav a{display:flex;align-items:center;gap:12px;min-height:44px;padding:10px 12px;border-radius:var(--r-btn);color:#E7EDF8;text-decoration:none;font-weight:600;font-size:15px;margin-bottom:4px;cursor:pointer;border-left:4px solid transparent}
+.nav a:hover{background:rgba(255,255,255,.08)}
+.nav a.active{background:var(--sidenav-active);color:#fff;border-left-color:#7FA6F5}
+.nav a svg{flex:0 0 20px}
+.side-foot{margin-top:auto;padding:16px;font-size:12px;color:#9FB3D9;border-top:1px solid rgba(255,255,255,.12)}
+
+.main{flex:1;min-width:0;display:flex;flex-direction:column}
+.topbar{height:64px;background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;gap:16px;padding:0 24px;position:sticky;top:0;z-index:20}
+.topbar .menu-btn{display:none}
+.crumb{font-size:14px;color:var(--sub)}
+.crumb b{color:var(--text);font-weight:600}
+.top-date{font-size:14px;color:var(--sub);white-space:nowrap}
+.top-tools{margin-left:auto;display:flex;align-items:center;gap:12px}
+.select{height:44px;border:1px solid var(--border);border-radius:var(--r-btn);background:#fff;padding:0 36px 0 12px;appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' fill='none' stroke='%23102B4B' stroke-width='2'%3E%3Cpath d='M4 6l4 4 4-4'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 12px center;font-weight:500;font-size:14px;cursor:pointer}
+.icon-btn{width:44px;height:44px;border:1px solid var(--border);border-radius:var(--r-btn);background:#fff;display:grid;place-items:center;cursor:pointer;position:relative}
+.dot{position:absolute;top:-4px;right:-4px;background:var(--danger);color:#fff;font-size:12px;font-weight:700;border-radius:9999px;min-width:18px;height:18px;display:grid;place-items:center;padding:0 4px}
+
+.page{padding:24px;display:none}
+.page.active{display:block}
+.page-head{display:flex;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:20px}
+.page-title{font-size:24px;font-weight:700;color:var(--primary)}
+.page-desc{font-size:14px;color:var(--sub);margin-top:2px}
+.page-actions{margin-left:auto;display:flex;gap:8px;flex-wrap:wrap}
+
+/* ---------- Components ---------- */
+.card{background:var(--surface);border:1px solid var(--border);border-radius:var(--r-card);padding:16px 20px;box-shadow:0 1px 2px rgba(16,43,75,.04)}
+.card-head{display:flex;align-items:flex-start;gap:12px;margin-bottom:12px;flex-wrap:wrap}
+.card-title{font-size:20px;font-weight:700;line-height:1.35}
+.card-sub{font-size:14px;color:var(--sub)}
+.grid{display:grid;gap:16px}
+.kpis{grid-template-columns:repeat(5,minmax(0,1fr));margin-bottom:16px}
+.kpi{padding:16px 20px;position:relative;min-height:116px}
+.kpi-label{font-size:14px;font-weight:600;color:var(--text);padding-right:32px}
+.kpi-val{font-size:32px;font-weight:700;line-height:1.2;margin-top:8px;color:var(--text);font-variant-numeric:tabular-nums}
+.kpi-unit{font-size:14px;font-weight:600;margin-left:4px}
+.kpi-ctx{font-size:12px;color:var(--sub);margin-top:2px}
+.kpi-ic{position:absolute;right:16px;top:16px;color:var(--sub)}
+.kpi.warn{background:var(--warning-bg);border-color:var(--border)}
+.kpi.warn .kpi-ctx,.kpi.warn .kpi-ic{color:var(--warning)}
+.c-s1{color:var(--s1)}.c-s2{color:var(--s2)}.c-s3{color:var(--s3)}.c-pri{color:var(--primary)}.c-warn{color:var(--warning)}.c-ok{color:var(--success)}
+
+.btn{min-height:44px;padding:0 16px;border-radius:var(--r-btn);border:1px solid var(--border);background:#fff;font-weight:600;font-size:14px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;white-space:nowrap}
+.btn:hover{background:var(--canvas)}
+.btn-primary{background:var(--primary);border-color:var(--primary);color:#fff}
+.btn-primary:hover{background:#0A41B3}
+.btn-sm{min-height:44px;padding:0 12px;font-size:14px}
+.seg{display:inline-flex;background:var(--canvas);border:1px solid var(--border);border-radius:var(--r-btn);padding:4px}
+.seg button{border:0;background:transparent;min-height:44px;padding:0 16px;border-radius:6px;font-size:14px;font-weight:500;color:var(--sub);cursor:pointer}
+.seg button.on{background:#fff;color:var(--primary);font-weight:700;box-shadow:0 1px 3px rgba(16,43,75,.12)}
+.badge{display:inline-flex;align-items:center;gap:6px;border-radius:9999px;padding:2px 10px;font-size:12px;font-weight:600;white-space:nowrap}
+.badge::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.b-ok{background:var(--success-bg);color:var(--success)}
+.b-warn{background:var(--warning-bg);color:var(--warning)}
+.b-danger{background:var(--danger-bg);color:var(--danger)}
+.b-info{background:var(--info-bg);color:var(--info)}
+.b-purple{background:var(--purple-bg);color:var(--purple)}
+.b-plain::before{display:none}
+.year-chip{display:inline-flex;align-items:center;gap:6px;background:var(--sidenav);color:#fff;border-radius:var(--r-btn);padding:6px 12px;font-size:14px;font-weight:600}
+.alert{display:flex;gap:10px;align-items:flex-start;border-radius:var(--r-card);padding:12px 16px;font-size:14px;margin-bottom:16px;border:1px solid}
+.alert-info{background:var(--info-bg);border-color:#C7D7FB;color:var(--info)}
+.legend{display:flex;gap:16px;flex-wrap:wrap;font-size:14px;justify-content:center;margin-top:8px}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:12px;height:12px;border-radius:3px;display:inline-block}
+
+/* ---------- Tables ---------- */
+.tbl-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:var(--r-card)}
+table{border-collapse:separate;border-spacing:0;width:100%;font-size:14px}
+th{background:var(--canvas);color:var(--text);font-weight:600;text-align:center;padding:12px 8px;border-bottom:1px solid var(--border);white-space:nowrap;font-size:14px}
+td{padding:6px 8px;border-bottom:1px solid var(--border);height:52px;vertical-align:middle}
+tr:last-child td{border-bottom:0}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.sticky{position:sticky;left:0;background:#fff;z-index:2}
+#monthlyMatrix tr>*:last-child{position:sticky;right:0;z-index:2;background:#F8FAFC;box-shadow:inset 1px 0 0 var(--border)}
+#monthlyMatrix .sum-row>*:last-child{background:var(--info-bg)}
+th.sticky{background:var(--canvas);z-index:3}
+.cat-row td{background:#F8FAFC;font-weight:600;font-size:14px;height:52px;color:var(--text)}
+.act-name{min-width:280px;max-width:320px}
+.act-name .t{font-weight:500;line-height:1.4}
+.act-name .s{font-size:12px;color:var(--sub);line-height:1.4}
+.unit-pill{display:inline-block;background:var(--canvas);border:1px solid var(--border);border-radius:var(--r-sm);padding:4px 8px;font-size:12px;white-space:nowrap}
+.in{width:96px;height:44px;border:1px solid var(--border);border-radius:10px;padding:0 8px;text-align:right;background:#fff;font-size:14px}
+.in:hover{border-color:var(--sub)}
+.in:focus{border-color:var(--primary);outline:2px solid #BFD1FA;outline-offset:0}
+.in.big{width:160px}
+.in.err{border-color:var(--danger);background:var(--danger-bg)}
+.in[readonly]{background:var(--canvas);color:var(--sub);border-style:dashed}
+.err-msg{display:block;color:var(--danger);font-size:12px;margin-top:2px}
+.total-cell{background:#F8FAFC;font-weight:600}
+.sum-row td{background:var(--info-bg);font-weight:600}
+.ghg-val{font-weight:600;color:var(--text)}
+.ef-box{display:flex;align-items:center;gap:6px;justify-content:flex-end}
+.ef-btn{width:44px;height:44px;border-radius:10px;border:1px solid var(--border);background:#fff;display:grid;place-items:center;cursor:pointer}
+.ef-btn:hover{background:var(--info-bg);border-color:#C7D7FB}
+.file-btn{display:inline-flex;align-items:center;gap:8px;min-height:44px;padding:0 12px;border-radius:10px;border:1px solid var(--border);background:#fff;font-size:12px;font-weight:600;cursor:pointer;white-space:nowrap;max-width:150px;overflow:hidden;text-overflow:ellipsis}
+.file-btn.has{background:var(--success-bg);border-color:#BFE3D1;color:var(--success)}
+.dash{color:var(--sub)}
+
+/* ---------- Scope accordion (dropdown) ---------- */
+.scope{border:1px solid var(--border);border-radius:var(--r-card);background:#fff;margin-bottom:12px;overflow:hidden}
+.scope-head{width:100%;display:flex;align-items:center;gap:12px;padding:12px 16px;background:#fff;border:0;cursor:pointer;text-align:left;min-height:64px}
+.scope-head:hover{background:#F8FAFC}
+.scope-tag{flex:0 0 auto}
+/* Scope chip: สีของ Scope อยู่ที่จุด ส่วนตัวหนังสือเป็น Text Primary เพื่อให้อ่านได้ (WCAG AA) */
+.chip{display:inline-flex;align-items:center;gap:8px;background:var(--canvas);border:1px solid var(--border);color:var(--text);border-radius:9999px;padding:2px 10px 2px 8px;font-size:12px;font-weight:600;white-space:nowrap}
+.sdot{width:10px;height:10px;border-radius:50%;flex:0 0 10px;display:inline-block}
+.kpi-mark{position:absolute;left:0;top:16px;bottom:16px;width:4px;border-radius:0 4px 4px 0}
+.scope-title{font-weight:700;font-size:16px}
+.scope-desc{font-size:14px;color:var(--sub)}
+.scope-meta{margin-left:auto;display:flex;align-items:center;gap:16px;text-align:right}
+.scope-meta .v{font-weight:700;font-size:18px}
+.scope-meta .u{font-size:12px;color:var(--sub)}
+.chev{transition:transform .2s}
+.scope.open .chev{transform:rotate(180deg)}
+.scope-body{display:none;border-top:1px solid var(--border);padding:12px 16px 16px}
+.scope.open .scope-body{display:block}
+.subcat{margin-top:8px}
+.subcat-head{display:flex;align-items:center;gap:8px;margin:8px 0;flex-wrap:wrap}
+.subcat-code{font-weight:700;font-size:14px}
+.subcat-en{font-size:12px;color:var(--sub)}
+
+.month-chips{display:flex;gap:6px;flex-wrap:wrap}
+.month-chips button{min-height:44px;min-width:52px;border:1px solid var(--border);background:#fff;border-radius:9999px;font-size:14px;font-weight:500;cursor:pointer;padding:0 12px;position:relative}
+.month-chips button.on{background:var(--primary);border-color:var(--primary);color:#fff;font-weight:700}
+.month-chips button .md{position:absolute;top:3px;right:6px;width:6px;height:6px;border-radius:50%;background:var(--success)}
+.month-chips button.on .md{background:#fff}
+.toolbar{display:flex;gap:12px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
+.search{height:44px;border:1px solid var(--border);border-radius:var(--r-btn);padding:0 12px 0 38px;min-width:240px;background:#fff url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' fill='none' stroke='%236B7280' stroke-width='2'%3E%3Ccircle cx='8' cy='8' r='6'/%3E%3Cpath d='M13 13l4 4'/%3E%3C/svg%3E") no-repeat 12px center;font-size:14px}
+.save-bar{position:sticky;bottom:0;background:rgba(248,250,252,.95);backdrop-filter:blur(4px);border-top:1px solid var(--border);margin:16px -24px -24px;padding:12px 24px;display:flex;align-items:center;gap:12px;z-index:5}
+.save-bar .info{font-size:14px;color:var(--sub)}
+
+/* ---------- Charts ---------- */
+.chart{width:100%;height:300px;position:relative}
+.chart svg{width:100%;height:100%;overflow:visible}
+.tip{position:fixed;pointer-events:none;background:var(--text);color:#fff;font-size:12px;padding:8px 12px;border-radius:6px;line-height:1.5;z-index:100;display:none;max-width:240px;box-shadow:0 4px 12px rgba(0,0,0,.2)}
+.donut-wrap{display:flex;align-items:center;gap:24px;flex-wrap:wrap}
+.donut-legend{flex:1;min-width:200px}
+.donut-legend .row{display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.donut-legend .row:last-child{border-bottom:0}
+.donut-legend .row .v{margin-left:auto;font-variant-numeric:tabular-nums}
+.bar-track{height:8px;background:var(--canvas);border-radius:9999px;overflow:hidden;min-width:80px}
+.bar-fill{height:100%;border-radius:9999px}
+.status-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px}
+.status-cell{border:1px solid var(--border);border-radius:10px;padding:8px;min-height:44px;text-align:center;font-size:14px}
+.status-cell b{display:block;font-size:14px}
+
+/* summary */
+.month-detail{grid-template-columns:repeat(3,minmax(0,1fr))}
+.md-card{border:1px solid var(--border);border-radius:var(--r-card);overflow:hidden}
+.md-card-head{padding:12px 16px;color:var(--text);background:#fff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;gap:8px}
+.md-card-head .m{font-size:12px;color:var(--sub)}
+.md-card-head .v{font-weight:700;font-size:20px;font-variant-numeric:tabular-nums}
+.md-list{padding:4px 16px 8px}
+.md-item{display:flex;gap:8px;padding:10px 0;border-bottom:1px solid var(--border);font-size:14px}
+.md-item:last-child{border-bottom:0}
+.md-item .q{font-size:12px;color:var(--sub)}
+.md-item .t{margin-left:auto;font-weight:700;white-space:nowrap;font-variant-numeric:tabular-nums}
+.md-empty{padding:16px;font-size:14px;color:var(--sub);text-align:center}
+.exp-btn{border:0;background:transparent;cursor:pointer;display:inline-flex;align-items:center;gap:8px;font-weight:700;font-size:14px;color:inherit;padding:0;min-height:44px;text-align:left}
+.exp-btn .chev{width:16px;height:16px}
+.scope-row.collapsed .chev{transform:rotate(-90deg)}
+.child-row td.sticky{padding-left:36px}
+
+/* dialog */
+.overlay{position:fixed;inset:0;background:rgba(1,35,81,.45);display:none;align-items:center;justify-content:center;z-index:200;padding:16px}
+.overlay.show{display:flex}
+.dialog{background:#fff;border-radius:var(--r-lg);width:min(760px,100%);max-height:88vh;display:flex;flex-direction:column;box-shadow:0 20px 50px rgba(0,0,0,.25)}
+.dialog-head{display:flex;align-items:center;gap:12px;padding:16px 20px;border-bottom:1px solid var(--border)}
+.dialog-head h3{font-size:20px}
+.dialog-body{padding:16px 20px;overflow:auto}
+.dialog-foot{display:flex;justify-content:flex-end;gap:8px;padding:12px 20px;border-top:1px solid var(--border)}
+.ef-row{cursor:pointer}
+.ef-row:hover td{background:#F8FAFC}
+.ef-row.sel td{background:var(--info-bg)}
+.toast{position:fixed;bottom:24px;right:24px;background:var(--success);color:#fff;padding:12px 16px;border-radius:var(--r-btn);font-weight:600;font-size:14px;display:none;z-index:300;box-shadow:0 8px 20px rgba(0,0,0,.2)}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+@media (max-width:1200px){.kpis{grid-template-columns:repeat(3,minmax(0,1fr))}.month-detail{grid-template-columns:1fr}}
+@media (max-width:900px){
+  .sidebar{position:fixed;left:-260px;z-index:50;transition:left .2s}
+  .sidebar.show{left:0}
+  .topbar .menu-btn{display:grid}
+  .kpis{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .two-col{grid-template-columns:1fr!important}
+  .page{padding:16px}
+  .save-bar{margin:16px -16px -16px;padding:12px 16px}
+  .crumb{display:none}
+  .status-grid{grid-template-columns:repeat(4,1fr)}
+}
+@media (max-width:700px){.top-date{display:none}}
+@media (max-width:520px){.kpis{grid-template-columns:1fr}.search{min-width:0;width:100%}.scope-meta .u{display:none}}
+
+/* ===== Theme: Neumorphism =====
+   สี ฟอนต์ ขนาดตัวอักษร และ Sidebar ตาม Design System เดิม
+   ต่างจากเดิมที่: ชิ้นงานนูนขึ้นจากพื้น Canvas ด้วยเงาคู่ ช่องกรอกเป็นแบบกดลึก */
+:root{
+  --raise:8px 8px 20px rgba(16,43,75,.14),-8px -8px 20px #FFFFFF;
+  --raise-sm:4px 4px 10px rgba(16,43,75,.14),-4px -4px 10px #FFFFFF;
+  --inset:inset 3px 3px 8px rgba(16,43,75,.16),inset -3px -3px 8px #FFFFFF;
+  --press-blue:inset 3px 3px 8px #083A9F,inset -3px -3px 8px #2E6AE6;
+}
+body{background:var(--canvas)}
+/* sidebar */
+.brand{border-bottom:0}
+.brand-logo{border-radius:12px;box-shadow:4px 4px 10px #00152F,-4px -4px 10px #023172}
+.nav{padding:16px 20px}
+.nav a{border-left:0;margin-bottom:12px;min-height:48px;padding:0 16px;border-radius:12px;box-shadow:4px 4px 10px #00152F,-4px -4px 10px #023172}
+.nav a:hover{background:#012351}
+.nav a.active{background:var(--sidenav-active);box-shadow:inset 3px 3px 8px #0C2F6B,inset -3px -3px 8px #2059B8}
+.side-foot{border-top:0}
+/* topbar */
+.topbar{margin:16px 32px 0;border:0;border-radius:16px;background:var(--canvas);box-shadow:var(--raise);top:16px}
+.page{padding:32px 40px 40px}
+.page>.card,.page>.grid{margin-bottom:32px !important}
+.grid{gap:24px}
+/* surfaces */
+.card{border:0;border-radius:16px;background:var(--canvas);box-shadow:var(--raise);padding:24px}
+.kpi{padding:20px}
+.kpi.warn{background:var(--canvas)}
+.kpi-ic{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;box-shadow:var(--inset)}
+.kpi:has(.kpi-mark) .kpi-ic svg{display:none}
+.kpi-mark{left:auto;right:30px;top:30px;bottom:auto;width:12px;height:12px;border-radius:50%;z-index:1}
+/* controls */
+.btn,.icon-btn,.select{border:0;background-color:var(--canvas);box-shadow:var(--raise-sm)}
+.btn:hover{background-color:var(--canvas)}
+.btn:active,.icon-btn:active{box-shadow:var(--inset)}
+.btn-primary,.btn-primary:hover{background:var(--primary);color:#fff;box-shadow:var(--press-blue),4px 4px 10px rgba(16,43,75,.24)}
+.icon-btn{border-radius:9999px}
+.search,.in{border:0;background-color:var(--canvas);box-shadow:var(--inset);border-radius:12px}
+.in:focus{outline:2px solid #BFD1FA;outline-offset:0}
+.in[readonly]{border:1px dashed var(--sub);box-shadow:none}
+.in.err{background:var(--danger-bg);outline:2px solid var(--danger)}
+.seg{border:0;background:var(--canvas);box-shadow:var(--inset);border-radius:16px;padding:6px;gap:8px}
+.seg button{border-radius:12px}
+.seg button.on{background:var(--canvas);box-shadow:var(--raise-sm)}
+.month-chips{gap:8px}
+.month-chips button{border:0;border-radius:12px;background:var(--canvas);box-shadow:var(--raise-sm)}
+.month-chips button.on{background:var(--primary);box-shadow:var(--press-blue)}
+.chip{border:0;background:var(--canvas);box-shadow:var(--raise-sm)}
+.unit-pill{border:0;background:var(--canvas);box-shadow:var(--inset)}
+.ef-btn,.file-btn{border:0;background:var(--canvas);box-shadow:var(--raise-sm)}
+.file-btn.has{background:var(--success-bg)}
+.year-chip{box-shadow:4px 4px 10px rgba(16,43,75,.24)}
+.alert{border:0;border-radius:16px;box-shadow:var(--inset)}
+/* tables in inset wells */
+.tbl-wrap{border:0;border-radius:12px;box-shadow:var(--inset);background:var(--canvas);padding:4px 8px}
+th{background:transparent}
+th.sticky,.sticky{background:var(--canvas)}
+.cat-row td,.total-cell{background:transparent}
+#monthlyMatrix tr>*:last-child{background:var(--canvas)}
+.exp-btn{padding:0 12px;border-radius:12px;background:var(--canvas);box-shadow:var(--raise-sm)}
+/* accordion */
+.scope{border:0;border-radius:16px;background:var(--canvas);box-shadow:var(--raise);margin-bottom:24px;overflow:visible}
+.scope-head{background:transparent;padding:16px 24px;min-height:80px;border-radius:16px}
+.scope-head:hover{background:transparent}
+.scope-head .chev{width:44px;height:44px;padding:13px;border-radius:50%;box-shadow:var(--raise-sm)}
+.scope-body{border-top:0;padding:0 24px 24px}
+.save-bar{background:var(--canvas);backdrop-filter:none;border:0;border-radius:16px;box-shadow:var(--raise);margin:24px 0 0;bottom:16px;padding:12px 16px 12px 24px}
+/* dashboard */
+.bar-track{height:8px;box-shadow:var(--inset);padding:2px}
+.bar-fill{height:4px}
+.status-grid{gap:16px}
+.status-cell{border:0;border-radius:12px;background:var(--canvas);box-shadow:var(--raise-sm);padding:12px 8px}
+#dashDonut svg{border-radius:50%;box-shadow:var(--raise)}
+.donut-legend .row{border:0;border-radius:12px;box-shadow:var(--inset);margin-bottom:12px;padding:0 16px;min-height:52px}
+.donut-legend .row .card-sub{display:none}
+.donut-legend .row .v{white-space:nowrap}
+/* summary */
+.md-card{border:0 !important;border-radius:16px;background:var(--canvas);box-shadow:var(--raise);overflow:visible}
+.md-card-head{background:transparent;border-bottom:0;padding:16px 20px}
+.md-list{margin:0 16px 16px;border-radius:12px;box-shadow:var(--inset);padding:4px 16px}
+/* dialog */
+.dialog{background:var(--canvas)}
+.dialog-head,.dialog-foot{border:0}
+.toast{box-shadow:var(--raise-sm)}
+@media (max-width:900px){.topbar{margin:12px 12px 0}.page{padding:24px 16px}}
+</style>
+</head>
+<body data-theme="neu">
+<div class="app">
+  <!-- ============ SIDEBAR ============ -->
+  <aside class="sidebar" id="sidebar" aria-label="เมนูหลัก">
+    <div class="brand">
+      <div class="brand-row">
+        <svg class="brand-logo" viewBox="0 0 40 40" aria-hidden="true"><rect x="2" y="2" width="36" height="36" rx="8" fill="#D7263D"/><rect x="16" y="8" width="8" height="24" rx="1" fill="#fff"/><rect x="8" y="16" width="24" height="8" rx="1" fill="#fff"/></svg>
+        <div class="brand-name">BANGKOK<br>HOSPITAL</div>
+      </div>
+      <div class="brand-sub">Carbon Footprint for Organization</div>
+    </div>
+    <nav class="nav">
+      <div class="nav-label">Carbon Footprint (CFO)</div>
+      <a data-page="dashboard" class="active" tabindex="0" aria-current="page">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="3" y="3" width="7" height="7" rx="1.5"/><rect x="14" y="3" width="7" height="7" rx="1.5"/><rect x="3" y="14" width="7" height="7" rx="1.5"/><rect x="14" y="14" width="7" height="7" rx="1.5"/></svg>
+        แดชบอร์ด CFO</a>
+      <a data-page="entry" tabindex="0">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><rect x="4" y="2" width="16" height="20" rx="2"/><path d="M8 6h8M8 10h2M14 10h2M8 14h2M14 14h2M8 18h2M14 18h2"/></svg>
+        กรอกกิจกรรม &amp; คำนวณ</a>
+      <a data-page="summary" tabindex="0">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg>
+        สรุปผล</a>
+    </nav>
+    <div class="side-foot">มาตรฐานอ้างอิง: TGO CFO / IPCC AR5 / ISO 14064-1</div>
+  </aside>
+
+  <div class="main">
+    <!-- ============ TOPBAR ============ -->
+    <header class="topbar">
+      <button class="icon-btn menu-btn" id="menuBtn" aria-label="เปิดเมนู"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg></button>
+      <div class="crumb">Carbon Footprint (CFO) / <b id="crumbPage">แดชบอร์ด CFO</b></div>
+      <div class="top-tools">
+        <span class="top-date" id="topDate" aria-label="วันที่ปัจจุบัน"></span>
+        <label class="sr" for="langSel">ภาษา</label>
+        <select class="select" id="langSel" style="padding-right:32px"><option>TH</option><option>EN</option></select>
+        <label class="sr" for="yearSel">ปีที่รายงาน</label>
+        <select class="select" id="yearSel"><option value="2569">ปีฐาน พ.ศ. 2569</option></select>
+        <button class="icon-btn" aria-label="การแจ้งเตือน 2 รายการ"><svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 8a6 6 0 1112 0c0 7 3 9 3 9H3s3-2 3-9M10 21h4"/></svg><span class="dot">2</span></button>
+      </div>
+    </header>
+
+    <!-- ============ PAGE: DASHBOARD ============ -->
+    <section class="page active" id="page-dashboard">
+      <div class="page-head">
+        <div><h1 class="page-title">แดชบอร์ด CFO</h1>
+        <div class="page-desc">ภาพรวมการปล่อยก๊าซเรือนกระจกขององค์กร ปี พ.ศ. 2569 (หน่วย tCO₂e)</div></div>
+      </div>
+      <div class="grid kpis" id="dashKpis"></div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head">
+          <div><div class="card-title">ปริมาณการปล่อยก๊าซเรือนกระจกแยกตามขอบเขต</div>
+          <div class="card-sub">หน่วย tCO₂e · วางเมาส์บนแท่งเพื่อดูค่าแต่ละขอบเขต</div></div>
+          <div class="seg" style="margin-left:auto" role="tablist" aria-label="ช่วงเวลา">
+            <button class="on" data-period="month" role="tab" aria-selected="true">รายเดือน</button>
+            <button data-period="quarter" role="tab" aria-selected="false">รายไตรมาส</button>
+          </div>
+        </div>
+        <div class="chart" id="dashBar"></div>
+        <div class="legend"><span><i class="sw" style="background:var(--s1)"></i>ขอบเขตที่ 1</span><span><i class="sw" style="background:var(--s2)"></i>ขอบเขตที่ 2</span><span><i class="sw" style="background:var(--s3)"></i>ขอบเขตที่ 3</span></div>
+      </div>
+
+      <div class="grid two-col" style="grid-template-columns:1fr 1fr;margin-bottom:16px">
+        <div class="card">
+          <div class="card-head"><div class="card-title">สัดส่วนตามขอบเขต (Scope)</div></div>
+          <div class="donut-wrap"><div id="dashDonut"></div><div class="donut-legend" id="dashDonutLegend"></div></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><div class="card-title">แหล่งปล่อยสูงสุด 5 อันดับ</div></div>
+          <div id="dashTop"></div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">สถานะการกรอกข้อมูลรายเดือน</div>
+          <div class="card-sub">นับจากจำนวนรายการกิจกรรมที่กรอกปริมาณในแต่ละเดือน</div></div>
+          <button class="btn btn-sm" style="margin-left:auto" onclick="go('entry')">ไปที่หน้ากรอกข้อมูล →</button>
+        </div>
+        <div class="status-grid" id="dashStatus"></div>
+      </div>
+    </section>
+
+    <!-- ============ PAGE: ENTRY + CALC ============ -->
+    <section class="page" id="page-entry">
+      <div class="page-head">
+        <div><h1 class="page-title">บัญชีรายการก๊าซเรือนกระจก &amp; คำนวณ</h1>
+        <div class="page-desc">กรอกข้อมูลกิจกรรม (Activity Data) รายเดือน แล้วระบบคำนวณ ปริมาณ × ค่า EF ให้อัตโนมัติ</div></div>
+        <div class="page-actions"><span class="year-chip"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><ellipse cx="12" cy="5" rx="8" ry="3"/><path d="M4 5v14c0 1.7 3.6 3 8 3s8-1.3 8-3V5M4 12c0 1.7 3.6 3 8 3s8-1.3 8-3"/></svg>ปีฐาน 2569</span></div>
+      </div>
+
+      <div class="seg" role="tablist" aria-label="ขั้นตอน" style="margin-bottom:16px">
+        <button class="on" data-tab="input" role="tab" aria-selected="true">① กรอกข้อมูลกิจกรรม</button>
+        <button data-tab="calc" role="tab" aria-selected="false">② คำนวณ GHGs (เลือกค่า EF)</button>
+      </div>
+
+      <div class="alert alert-info" id="entryHint">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="flex:0 0 20px;margin-top:1px"><circle cx="12" cy="12" r="9"/><path d="M12 8h.01M11 12h1v5h1"/></svg>
+        <div id="entryHintText"></div>
+      </div>
+
+      <div class="toolbar">
+        <label class="sr" for="actSearch">ค้นหากิจกรรม</label>
+        <input class="search" id="actSearch" placeholder="ค้นหากิจกรรม เช่น ดีเซล, ไฟฟ้า, ขยะ">
+        <div id="monthPickWrap" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span style="font-size:14px;font-weight:600">เดือนที่กรอก:</span>
+          <div class="month-chips" id="monthChips" role="group" aria-label="เลือกเดือนที่กรอก"></div>
+        </div>
+        <div style="margin-left:auto;display:flex;gap:8px">
+          <button class="btn btn-sm" id="expandAll">ขยายทั้งหมด</button>
+          <button class="btn btn-sm" id="collapseAll">ย่อทั้งหมด</button>
+        </div>
+      </div>
+
+      <div id="scopeList"></div>
+
+      <div class="save-bar">
+        <div class="info" id="saveInfo"></div>
+        <button class="btn" style="margin-left:auto" onclick="go('summary')">ดูสรุปผล</button>
+        <button class="btn btn-primary" id="saveBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M5 3h11l5 5v13H3V3zM7 3v6h9V3M7 21v-7h10v7"/></svg>บันทึกข้อมูล</button>
+      </div>
+    </section>
+
+    <!-- ============ PAGE: SUMMARY ============ -->
+    <section class="page" id="page-summary">
+      <div class="page-head">
+        <div><h1 class="page-title">สรุปผลการปล่อยก๊าซเรือนกระจก</h1>
+        <div class="page-desc">สรุปตามขอบเขต และรายเดือน ปี พ.ศ. 2569</div></div>
+        <div class="page-actions">
+          <span class="year-chip">ปีฐาน 2569</span>
+          <button class="btn btn-primary" id="dlBtn"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M12 3v12M7 10l5 5 5-5M4 21h16"/></svg>ดาวน์โหลดสรุปผล (CSV)</button>
+        </div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head">
+          <div><div class="card-title">สรุปปริมาณการปล่อยก๊าซเรือนกระจก</div><div class="card-sub">ทั้งปี · หน่วย tCO₂e</div></div>
+          <div class="seg" style="margin-left:auto" aria-label="รูปแบบการแสดงผล">
+            <button class="on" data-sumview="table">ตาราง</button>
+            <button data-sumview="chart">กราฟ</button>
+          </div>
+        </div>
+        <div id="sumTable"></div>
+        <div id="sumChart" style="display:none"><div class="chart" id="sumBar" style="height:260px"></div></div>
+      </div>
+
+      <div class="card" style="margin-bottom:16px">
+        <div class="card-head">
+          <div><div class="card-title">สรุปรายเดือนแยกตามขอบเขต</div>
+          <div class="card-sub">แต่ละขอบเขตในแต่ละเดือนมีรายการใดบ้าง · หน่วย tCO₂e · กดที่ชื่อขอบเขตเพื่อย่อ/ขยายรายการ</div></div>
+        </div>
+        <div class="tbl-wrap" id="monthlyMatrix"></div>
+      </div>
+
+      <div class="card">
+        <div class="card-head">
+          <div><div class="card-title">รายละเอียดรายเดือน</div><div class="card-sub">เลือกเดือนเพื่อดูรายการในแต่ละขอบเขต พร้อมปริมาณกิจกรรม</div></div>
+          <div style="margin-left:auto"><label class="sr" for="sumMonth">เลือกเดือน</label><select class="select" id="sumMonth"></select></div>
+        </div>
+        <div class="grid month-detail" id="monthDetail"></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<!-- EF dialog -->
+<div class="overlay" id="efOverlay" role="dialog" aria-modal="true" aria-labelledby="efTitle">
+  <div class="dialog">
+    <div class="dialog-head">
+      <div><h3 id="efTitle">เลือกค่า Emission Factor</h3><div class="card-sub" id="efFor"></div></div>
+      <button class="icon-btn" style="margin-left:auto" id="efClose" aria-label="ปิด"><svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 6l12 12M18 6L6 18"/></svg></button>
+    </div>
+    <div class="dialog-body">
+      <label class="sr" for="efSearch">ค้นหา EF</label>
+      <input class="search" id="efSearch" placeholder="ค้นหาชื่อ EF หรือหน่วย" style="width:100%;margin-bottom:12px">
+      <div class="tbl-wrap"><table><thead><tr><th style="width:40px"></th><th style="text-align:left">ชื่อ (Name)</th><th>หน่วย</th><th>ค่า EF</th><th>แหล่งอ้างอิง</th></tr></thead><tbody id="efBody"></tbody></table></div>
+    </div>
+    <div class="dialog-foot"><button class="btn" id="efCancel">ยกเลิก</button><button class="btn btn-primary" id="efOk">เลือกค่านี้</button></div>
+  </div>
+</div>
+<div class="tip" id="tip"></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* ================= DATA (จาก cfo-data-ef-matrix-bgh.xlsx) ================= */
+const MONTHS=['ม.ค.','ก.พ.','มี.ค.','เม.ย.','พ.ค.','มิ.ย.','ก.ค.','ส.ค.','ก.ย.','ต.ค.','พ.ย.','ธ.ค.'];
+const MONTHS_FULL=['มกราคม','กุมภาพันธ์','มีนาคม','เมษายน','พฤษภาคม','มิถุนายน','กรกฎาคม','สิงหาคม','กันยายน','ตุลาคม','พฤศจิกายน','ธันวาคม'];
+const SCOPES=[
+ {id:1,name:'ขอบเขตที่ 1',en:'Scope 1',desc:'การปล่อยก๊าซเรือนกระจกโดยตรง',color:'var(--s1)',hex:'#0C4DD2'},
+ {id:2,name:'ขอบเขตที่ 2',en:'Scope 2',desc:'การปล่อยทางอ้อมจากการใช้พลังงาน',color:'var(--s2)',hex:'#FFA500'},
+ {id:3,name:'ขอบเขตที่ 3',en:'Scope 3',desc:'การปล่อยทางอ้อมอื่น ๆ',color:'var(--s3)',hex:'#6D28D9'}];
+const CATS=[
+ {code:'1.1',scope:1,name:'การเผาไหม้ที่อยู่กับที่',en:'Stationary Combustion'},
+ {code:'1.2',scope:1,name:'การเผาไหม้ที่มีการเคลื่อนที่',en:'Mobile Combustion'},
+ {code:'1.3',scope:1,name:'การรั่วไหลและอื่น ๆ',en:'Fugitive & Other Emissions'},
+ {code:'2.1',scope:2,name:'ไฟฟ้า',en:'Purchased Electricity'},
+ {code:'3.1',scope:3,name:'การซื้อสินค้าและบริการ',en:'Purchased Goods and Services'},
+ {code:'3.2',scope:3,name:'ของเสียที่เกิดจากการดำเนินงาน',en:'Waste Generated in Operations'},
+ {code:'3.3',scope:3,name:'กิจกรรมที่เกี่ยวข้องกับเชื้อเพลิงและพลังงาน',en:'Fuel- and Energy-related Activities'}];
+const EF_LIB=[
+ {id:'ef_diesel_fossil',name:'น้ำมันดีเซล 100% Fossil',unit:'ลิตร',ef:2.7076,efUnit:'kgCO2e/Litre',src:'TGO AR5 v2',scope:1},
+ {id:'ef_diesel_b7',name:'น้ำมันดีเซล B7',unit:'ลิตร',ef:2.5184,efUnit:'kgCO2e/Litre',src:'TGO AR5 v2',scope:1},
+ {id:'ef_e10',name:'น้ำมันแก๊สโซฮอล์ E10',unit:'ลิตร',ef:1.9708,efUnit:'kgCO2e/Litre',src:'TGO AR5 v2',scope:1},
+ {id:'ef_lpg',name:'ก๊าซหุงต้ม LPG',unit:'kg',ef:1.6812,efUnit:'kgCO2e/kg',src:'TGO AR5 v2',scope:1},
+ {id:'ef_sevo',name:'ก๊าซยาสลบ Sevoflurane',unit:'kg',ef:130,efUnit:'kgCO2e/kg',src:'IPCC AR5 (GWP = 130)',scope:1},
+ {id:'ef_des',name:'ก๊าซยาสลบ Desflurane',unit:'kg',ef:2540,efUnit:'kgCO2e/kg',src:'IPCC AR5 (GWP = 2,540)',scope:1},
+ {id:'ef_r134a',name:'สารทำความเย็น R-134a',unit:'kg',ef:1300,efUnit:'kgCO2e/kg',src:'TGO AR5 v2 (GWP = 1,300)',scope:1},
+ {id:'ef_r410a',name:'สารทำความเย็น R-410a',unit:'kg',ef:1923.5,efUnit:'kgCO2e/kg',src:'TGO AR5 v2 (GWP = 1,923.5)',scope:1},
+ {id:'ef_septic',name:'CH4 จาก Septic Tank (0.3 kgCH4/kg BOD × GWP 28)',unit:'kg BOD',ef:8.4,efUnit:'kgCO2e/kg BOD',src:'IPCC Eq. 6.1-6.3 (GWP=28)',scope:1},
+ {id:'ef_grid',name:'ไฟฟ้าจากระบบสายส่ง (Grid Mix)',unit:'kWh',ef:0.475,efUnit:'kgCO2e/kWh',src:'TGO AR5 v2 (Grid Mix)',scope:2},
+ {id:'ef_water',name:'น้ำประปา',unit:'m³',ef:0.187,efUnit:'kgCO2e/m³',src:'TGO AR5 v2',scope:3},
+ {id:'ef_paper',name:'กระดาษ A4',unit:'kg',ef:1.52,efUnit:'kgCO2e/kg',src:'TGO AR5 v2',scope:3},
+ {id:'ef_infect',name:'ขยะติดเชื้อ (เผา)',unit:'kg',ef:2.15,efUnit:'kgCO2e/kg',src:'TGO / MOPH Guidelines',scope:3},
+ {id:'ef_landfill',name:'ขยะทั่วไป (ฝังกลบ)',unit:'kg',ef:0.54,efUnit:'kgCO2e/kg',src:'TGO AR5 v2',scope:3},
+ {id:'ef_upstream',name:'ไฟฟ้า Upstream Loss',unit:'kWh',ef:0.5562,efUnit:'kgCO2e/kWh',src:'TGO AR5 v2',scope:3}];
+const EF=Object.fromEntries(EF_LIB.map(e=>[e.id,e]));
+// sample monthly values (ข้อมูลตัวอย่าง ม.ค.–ต.ค.)
+const ACTS=[
+ {id:'fuel_diesel_fossil_liters',cat:'1.1',name:'ดีเซล (เครื่องปั่นไฟสำรอง)',detail:'น้ำมันดีเซล 100% Fossil สำหรับระบบไฟสำรองอาคาร',unit:'ลิตร',ef:'ef_diesel_fossil',evidence:'สลิปน้ำมัน',base:800},
+ {id:'lpg_kg',cat:'1.1',name:'ก๊าซหุงต้ม LPG (โรงครัว)',detail:'ก๊าซ LPG สำหรับโรงครัวและโภชนาการผู้ป่วย',unit:'kg',ef:'ef_lpg',evidence:'ใบแจ้งหนี้',base:1200},
+ {id:'fuel_diesel_b7_liters',cat:'1.2',name:'ดีเซล B7 (รถพยาบาล/รถรับส่ง)',detail:'น้ำมันดีเซล B7 สำหรับรถพยาบาลและรถรับส่ง',unit:'ลิตร',ef:'ef_diesel_b7',evidence:'สลิปน้ำมัน',base:3500},
+ {id:'fuel_gasohol_e10_liters',cat:'1.2',name:'แก๊สโซฮอล์ E10 (รถส่วนกลาง)',detail:'น้ำมันแก๊สโซฮอล์ E10 สำหรับรถส่วนกลาง/ผู้บริหาร',unit:'ลิตร',ef:'ef_e10',evidence:'สลิปน้ำมัน',base:900},
+ {id:'anesthetic_sevoflurane_kg',cat:'1.3',name:'ก๊าซยาสลบ Sevoflurane (OR)',detail:'ก๊าซยาสลบในห้องผ่าตัด',unit:'kg',ef:'ef_sevo',evidence:'บันทึกเบิกจ่าย',base:12},
+ {id:'anesthetic_desflurane_kg',cat:'1.3',name:'ก๊าซยาสลบ Desflurane (OR)',detail:'ก๊าซยาสลบในห้องผ่าตัด',unit:'kg',ef:'ef_des',evidence:'บันทึกเบิกจ่าย',base:1.5},
+ {id:'refrigerant_r134a_kg',cat:'1.3',name:'สารทำความเย็น R-134a',detail:'ตู้แช่ยา ตู้แช่เลือด และแอร์',unit:'kg',ef:'ef_r134a',evidence:'ใบงานเติมสาร',base:2,sparse:[2,6,9]},
+ {id:'refrigerant_r410a_kg',cat:'1.3',name:'สารทำความเย็น R-410a',detail:'ระบบปรับอากาศอาคาร รพ.',unit:'kg',ef:'ef_r410a',evidence:'ใบงานเติมสาร',base:5,sparse:[1,4,7]},
+ {id:'wastewater_bod_kg',cat:'1.3',name:'ระบบบำบัดน้ำเสีย (Septic Tank)',detail:'CH4 จากส้วมซึม/ถังเกรอะ อาคารผู้ป่วย',unit:'kg BOD',ef:'ef_septic',evidence:'ผลวิเคราะห์ BOD',base:1500},
+ {id:'electricity_kwh',cat:'2.1',name:'การใช้พลังงานไฟฟ้า',detail:'ไฟฟ้าอาคาร รพ. (24 ชม.) & เครื่องมือแพทย์ (MRI/CT)',unit:'kWh',ef:'ef_grid',evidence:'บิลค่าไฟ กฟน./กฟภ.',base:1200000},
+ {id:'water_supply_m3',cat:'3.1',name:'น้ำประปา',detail:'การใช้น้ำประปาอุปโภคบริโภคในโรงพยาบาล',unit:'m³',ef:'ef_water',evidence:'บิลค่าน้ำ',base:18000},
+ {id:'paper_a4_kg',cat:'3.1',name:'กระดาษ A4',detail:'กระดาษเวชระเบียนและเอกสารธุรการ',unit:'kg',ef:'ef_paper',evidence:'ใบเบิกพัสดุ',base:1500},
+ {id:'waste_infectious_kg',cat:'3.2',name:'ขยะติดเชื้อ (กำจัดโดยการเผา)',detail:'มูลฝอยติดเชื้อทางการแพทย์',unit:'kg',ef:'ef_infect',evidence:'Manifest',base:9000},
+ {id:'waste_landfill_kg',cat:'3.2',name:'ขยะทั่วไป (ฝังกลบ)',detail:'ขยะทั่วไปเข้าหลุมฝังกลบ (Landfill)',unit:'kg',ef:'ef_landfill',evidence:'ใบชั่งน้ำหนัก',base:40000},
+ {id:'electricity_scope3_kwh',cat:'3.3',name:'ไฟฟ้า Upstream Loss (คำนวณอัตโนมัติ)',detail:'ความสูญเสียในระบบส่งจ่าย · ดึงค่า kWh จากขอบเขตที่ 2',unit:'kWh',ef:'ef_upstream',evidence:'-',auto:'electricity_kwh'}];
+const FILLED_MONTHS=10; // ม.ค.–ต.ค.
+ACTS.forEach((a,i)=>{
+  a.q=Array(12).fill(null); a.file=null;
+  if(a.auto) return;
+  for(let m=0;m<FILLED_MONTHS;m++){
+    if(a.sparse){ if(a.sparse.includes(m)) a.q[m]=a.base; continue; }
+    const f=1+0.12*Math.sin((m+1)*1.3+i)+0.04*Math.cos(m*2.1+i*0.7);
+    a.q[m]=Math.round(a.base*f*100)/100;
+  }
+});
+const ACT=Object.fromEntries(ACTS.map(a=>[a.id,a]));
+
+/* ================= CALC ================= */
+const qty=(a,m)=>a.auto?ACT[a.auto].q[m]:a.q[m];
+const qtyTotal=a=>{let s=0;for(let m=0;m<12;m++)s+=+qty(a,m)||0;return s};
+const efOf=a=>EF[a.ef];
+const tco2=(a,m)=>((+qty(a,m)||0)*efOf(a).ef)/1000;
+const tco2Total=a=>{let s=0;for(let m=0;m<12;m++)s+=tco2(a,m);return s};
+const catScope=c=>CATS.find(x=>x.code===c).scope;
+const actsOfScope=s=>ACTS.filter(a=>catScope(a.cat)===s);
+const scopeMonth=(s,m)=>actsOfScope(s).reduce((t,a)=>t+tco2(a,m),0);
+const scopeTotal=s=>actsOfScope(s).reduce((t,a)=>t+tco2Total(a),0);
+const monthHasData=m=>ACTS.some(a=>!a.auto&&a.q[m]!==null&&a.q[m]!=='');
+const fmt=(v,d=2)=>(+v).toLocaleString('th-TH',{minimumFractionDigits:d,maximumFractionDigits:d});
+const fmtQ=v=>(v===null||v===''||isNaN(v))?'':(+v).toLocaleString('th-TH',{maximumFractionDigits:2});
+const fmtEF=v=>(+v).toLocaleString('th-TH',{maximumFractionDigits:4});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+/* ================= NAV ================= */
+const PAGE_NAME={dashboard:'แดชบอร์ด CFO',entry:'กรอกกิจกรรม & คำนวณ',summary:'สรุปผล'};
+function go(p){
+  document.querySelectorAll('.page').forEach(x=>x.classList.toggle('active',x.id==='page-'+p));
+  document.querySelectorAll('.nav a').forEach(a=>{const on=a.dataset.page===p;a.classList.toggle('active',on);on?a.setAttribute('aria-current','page'):a.removeAttribute('aria-current')});
+  document.getElementById('crumbPage').textContent=PAGE_NAME[p];
+  document.getElementById('sidebar').classList.remove('show');
+  render(p); window.scrollTo(0,0);
+}
+document.querySelectorAll('.nav a').forEach(a=>{a.onclick=()=>go(a.dataset.page);a.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();go(a.dataset.page)}}});
+document.getElementById('menuBtn').onclick=()=>document.getElementById('sidebar').classList.toggle('show');
+function render(p){ if(p==='dashboard')renderDash(); if(p==='entry')renderEntry(); if(p==='summary')renderSummary(); }
+
+/* ================= TOOLTIP ================= */
+const tip=document.getElementById('tip');
+function showTip(e,html){tip.innerHTML=html;tip.style.display='block';const x=Math.min(e.clientX+14,innerWidth-250);tip.style.left=x+'px';tip.style.top=(e.clientY+14)+'px'}
+function hideTip(){tip.style.display='none'}
+
+/* ================= CHARTS ================= */
+function stackedBar(el,labels,series){ // series:[{name,color,values[]}]
+  const W=el.clientWidth||800,H=el.clientHeight||300,pl=56,pr=12,pt=12,pb=34;
+  const tot=labels.map((_,i)=>series.reduce((s,x)=>s+x.values[i],0));
+  let max=Math.max(...tot,1); const step=niceStep(max/4); max=step*Math.ceil(max/step);
+  const cw=(W-pl-pr)/labels.length, bw=Math.min(36,cw*0.55);
+  let g='';
+  for(let v=0;v<=max+1e-9;v+=step){const y=pt+(H-pt-pb)*(1-v/max);g+=`<line x1="${pl}" x2="${W-pr}" y1="${y}" y2="${y}" stroke="#E2E8F0"/><text x="${pl-8}" y="${y+4}" text-anchor="end" font-size="12" fill="#6B7280">${fmt(v,0)}</text>`}
+  g+=`<text x="12" y="${pt+(H-pt-pb)/2}" font-size="12" fill="#6B7280" transform="rotate(-90 12 ${pt+(H-pt-pb)/2})" text-anchor="middle">tCO₂e</text>`;
+  labels.forEach((l,i)=>{
+    const x=pl+cw*i+(cw-bw)/2; let y0=H-pb;
+    const tipHtml=`<b>${l}</b><br>`+series.map(s=>`<span style="color:${s.tipc||'#fff'}">■</span> ${s.name}: ${fmt(s.values[i])}`).join('<br>')+`<br><b>รวม ${fmt(tot[i])} tCO₂e</b>`;
+    series.forEach(s=>{const h=(H-pt-pb)*s.values[i]/max; if(h>0){y0-=h;g+=`<rect x="${x}" y="${y0}" width="${bw}" height="${h}" fill="${s.hex}"/>`}});
+    if(tot[i]>0) g+=`<rect x="${x}" y="${y0}" width="${bw}" height="${H-pb-y0}" fill="transparent" rx="4" data-tip="${esc(tipHtml)}" style="cursor:pointer"/>`;
+    g+=`<text x="${pl+cw*i+cw/2}" y="${H-pb+20}" text-anchor="middle" font-size="12" fill="#102B4B">${l}</text>`;
+  });
+  g+=`<line x1="${pl}" x2="${W-pr}" y1="${H-pb}" y2="${H-pb}" stroke="#6B7280"/>`;
+  el.innerHTML=`<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="กราฟแท่งปริมาณก๊าซเรือนกระจก">${g}</svg>`;
+  el.querySelectorAll('[data-tip]').forEach(r=>{r.onmousemove=e=>showTip(e,r.dataset.tip);r.onmouseleave=hideTip});
+}
+function niceStep(x){const p=Math.pow(10,Math.floor(Math.log10(x||1)));const n=x/p;return (n<=1?1:n<=2?2:n<=5?5:10)*p}
+function donut(el,parts,center){
+  const R=70,r=48,C=90; const sum=parts.reduce((s,p)=>s+p.v,0)||1; let a=-Math.PI/2,g='';
+  parts.forEach(p=>{const ang=p.v/sum*Math.PI*2; if(ang<=0)return; const a2=a+ang-0.0001;
+    const L=ang>Math.PI?1:0, P=(rr,t)=>`${C+rr*Math.cos(t)} ${C+rr*Math.sin(t)}`;
+    g+=`<path d="M${P(R,a)} A${R} ${R} 0 ${L} 1 ${P(R,a2)} L${P(r,a2)} A${r} ${r} 0 ${L} 0 ${P(r,a)}Z" fill="${p.hex}" data-tip="${esc(`<b>${p.name}</b><br>${fmt(p.v)} tCO₂e (${fmt(p.v/sum*100,1)}%)`)}" style="cursor:pointer"/>`; a+=ang;});
+  g+=`<text x="${C}" y="${C-12}" text-anchor="middle" font-size="12" fill="#6B7280">รวม</text><text x="${C}" y="${C+10}" text-anchor="middle" font-size="18" font-weight="700" fill="#102B4B">${center}</text><text x="${C}" y="${C+28}" text-anchor="middle" font-size="12" fill="#6B7280">tCO₂e</text>`;
+  el.innerHTML=`<svg width="180" height="180" viewBox="0 0 180 180" role="img" aria-label="แผนภูมิโดนัทสัดส่วนตามขอบเขต">${g}</svg>`;
+  el.querySelectorAll('[data-tip]').forEach(r=>{r.onmousemove=e=>showTip(e,r.dataset.tip);r.onmouseleave=hideTip});
+}
+
+/* ================= DASHBOARD ================= */
+let period='month';
+document.querySelectorAll('[data-period]').forEach(b=>b.onclick=()=>{period=b.dataset.period;document.querySelectorAll('[data-period]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});renderDash()});
+function renderDash(){
+  const s=[1,2,3].map(scopeTotal), total=s[0]+s[1]+s[2];
+  const filled=MONTHS.filter((_,m)=>monthHasData(m)).length;
+  const kpi=(label,val,unit,ctx,cls,icon,extra='',mark='')=>`<div class="card kpi ${extra}">${mark?`<i class="kpi-mark" style="background:${mark}"></i>`:''}<div class="kpi-label">${label}</div><span class="kpi-ic">${icon}</span><div class="kpi-val ${cls}">${val}<span class="kpi-unit">${unit}</span></div><div class="kpi-ctx">${ctx}</div></div>`;
+  const ic=p=>`<svg width="24" height="24" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">${p}</svg>`;
+  document.getElementById('dashKpis').innerHTML=
+    kpi('ปริมาณการปล่อยรวม',fmt(total),'tCO₂e','ขอบเขตที่ 1+2+3','c-pri',ic('<path d="M3 17l6-6 4 4 8-8M14 7h7v7"/>'))+
+    kpi('ขอบเขตที่ 1 (Scope 1)',fmt(s[0]),'tCO₂e',`${fmt(s[0]/total*100,1)}% ของทั้งหมด · การปล่อยทางตรง`,'',ic('<path d="M12 2c3 4 6 7 6 11a6 6 0 01-12 0c0-4 3-7 6-11z"/>'),'',SCOPES[0].hex)+
+    kpi('ขอบเขตที่ 2 (Scope 2)',fmt(s[1]),'tCO₂e',`${fmt(s[1]/total*100,1)}% ของทั้งหมด · ไฟฟ้า`,'',ic('<path d="M13 2L4 14h7l-1 8 9-12h-7z"/>'),'',SCOPES[1].hex)+
+    kpi('ขอบเขตที่ 3 (Scope 3)',fmt(s[2]),'tCO₂e',`${fmt(s[2]/total*100,1)}% ของทั้งหมด · ทางอ้อมอื่น ๆ`,'',ic('<path d="M3 7l9-4 9 4-9 4-9-4zM3 12l9 4 9-4M3 17l9 4 9-4"/>'),'',SCOPES[2].hex)+
+    kpi('ความครบถ้วนของข้อมูล',`${filled}/12`,'เดือน',`ยังไม่กรอก ${12-filled} เดือน`,'c-warn',ic('<path d="M12 3l10 18H2L12 3zM12 10v4M12 17h.01"/>'),'warn');
+  let labels=MONTHS, vals=[1,2,3].map(sc=>MONTHS.map((_,m)=>scopeMonth(sc,m)));
+  if(period==='quarter'){labels=['ไตรมาส 1','ไตรมาส 2','ไตรมาส 3','ไตรมาส 4'];vals=vals.map(v=>[0,1,2,3].map(q=>v[q*3]+v[q*3+1]+v[q*3+2]))}
+  stackedBar(document.getElementById('dashBar'),labels,SCOPES.map((sc,i)=>({name:sc.name,hex:sc.hex,tipc:i===0?'#7FA6F5':sc.hex,values:vals[i]})));
+  donut(document.getElementById('dashDonut'),SCOPES.map((sc,i)=>({name:sc.name,hex:sc.hex,v:s[i]})),fmt(total));
+  document.getElementById('dashDonutLegend').innerHTML=SCOPES.map((sc,i)=>`<div class="row"><i class="sw" style="background:${sc.hex};border-radius:50%"></i>${sc.name} <span class="card-sub">(${sc.en})</span><span class="v">${fmt(s[i])} (${fmt(s[i]/total*100,1)}%)</span></div>`).join('');
+  const top=[...ACTS].map(a=>({a,v:tco2Total(a)})).sort((x,y)=>y.v-x.v).slice(0,5); const tmax=top[0].v||1;
+  document.getElementById('dashTop').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th style="text-align:left">แหล่งปล่อย</th><th>ขอบเขต</th><th style="text-align:right">tCO₂e</th><th style="width:30%">สัดส่วน</th></tr></thead><tbody>${top.map(({a,v})=>{const sc=SCOPES[catScope(a.cat)-1];return `<tr><td>${esc(a.name)}</td><td style="text-align:center"><span class="chip"><i class="sdot" style="background:${sc.hex}"></i>${sc.en}</span></td><td class="num ghg-val">${fmt(v)}</td><td><div class="bar-track"><div class="bar-fill" style="width:${v/tmax*100}%;background:${sc.hex}"></div></div></td></tr>`}).join('')}</tbody></table></div>`;
+  const nInput=ACTS.filter(a=>!a.auto).length;
+  document.getElementById('dashStatus').innerHTML=MONTHS.map((mm,m)=>{const n=ACTS.filter(a=>!a.auto&&a.q[m]!==null&&a.q[m]!=='').length;
+    const st=n===0?'<span class="badge b-danger">ยังไม่กรอก</span>':n<nInput-3?'<span class="badge b-warn">บางส่วน</span>':'<span class="badge b-ok">กรอกแล้ว</span>';
+    return `<div class="status-cell"><b>${mm}</b>${st}<div class="card-sub" style="margin-top:4px">${n}/${nInput} รายการ</div></div>`}).join('');
+}
+
+/* ================= ENTRY / CALC ================= */
+let tab='input', selMonth=-1 /* -1 = ทั้งปี */, openScopes=new Set([1]), query='';
+document.querySelectorAll('[data-tab]').forEach(b=>b.onclick=()=>{tab=b.dataset.tab;document.querySelectorAll('[data-tab]').forEach(x=>{x.classList.toggle('on',x===b);x.setAttribute('aria-selected',x===b)});renderEntry()});
+document.getElementById('actSearch').oninput=e=>{query=e.target.value.trim().toLowerCase(); if(query) openScopes=new Set([1,2,3]); renderScopes()};
+document.getElementById('expandAll').onclick=()=>{openScopes=new Set([1,2,3]);renderScopes()};
+document.getElementById('collapseAll').onclick=()=>{openScopes=new Set();renderScopes()};
+function renderEntry(){
+  document.getElementById('entryHintText').innerHTML= tab==='input'
+   ? '<b>ขั้นตอนที่ 1:</b> เลือกเดือนที่ต้องการกรอก (หรือ "ทั้งปี" เพื่อดู 12 เดือน) → กดเปิดแต่ละขอบเขต → กรอกปริมาณตามหน่วยที่กำหนด และแนบหลักฐาน (บิล/สลิป) ช่องสีเทาเส้นประคือค่าที่ระบบคำนวณให้อัตโนมัติ'
+   : '<b>ขั้นตอนที่ 2:</b> ตรวจสอบปริมาณรวมทั้งปี และค่า EF ของแต่ละรายการ หากต้องการเปลี่ยนค่า EF ให้กดปุ่ม <b>ค้นหา</b> หน้าช่อง EF แล้วเลือกจากฐานข้อมูล อบก. ระบบคำนวณ ปริมาณ × EF ÷ 1,000 = tCO₂e';
+  document.getElementById('monthPickWrap').style.display= tab==='input'?'flex':'none';
+  document.getElementById('monthChips').innerHTML=`<button class="${selMonth===-1?'on':''}" data-m="-1" aria-pressed="${selMonth===-1}">ทั้งปี</button>`+MONTHS.map((mm,m)=>`<button class="${selMonth===m?'on':''}" data-m="${m}" aria-pressed="${selMonth===m}" title="${MONTHS_FULL[m]}${monthHasData(m)?' (มีข้อมูล)':''}">${mm}${monthHasData(m)?'<i class="md"></i>':''}</button>`).join('');
+  document.querySelectorAll('#monthChips button').forEach(b=>b.onclick=()=>{selMonth=+b.dataset.m;renderEntry()});
+  renderScopes();
+}
+function matchQ(a){return !query||(a.name+a.detail+a.unit).toLowerCase().includes(query)}
+function renderScopes(){
+  const host=document.getElementById('scopeList'); host.innerHTML='';
+  SCOPES.forEach(sc=>{
+    const acts=actsOfScope(sc.id).filter(matchQ); if(!acts.length&&query) return;
+    const sub = tab==='input'&&selMonth>=0 ? scopeMonth(sc.id,selMonth) : scopeTotal(sc.id);
+    const subLbl = tab==='input'&&selMonth>=0 ? MONTHS_FULL[selMonth] : 'ทั้งปี';
+    const div=document.createElement('div'); div.className='scope'+(openScopes.has(sc.id)?' open':'');
+    div.innerHTML=`<button class="scope-head" aria-expanded="${openScopes.has(sc.id)}" aria-controls="sb${sc.id}">
+      <span class="scope-tag chip" style="font-size:14px;padding:4px 12px 4px 10px"><i class="sdot" style="background:${sc.hex}"></i>${sc.en}</span>
+      <span><span class="scope-title">${sc.name}</span><br><span class="scope-desc">${sc.desc} · ${actsOfScope(sc.id).length} รายการ</span></span>
+      <span class="scope-meta"><span><span class="v" data-scope-sub="${sc.id}">${fmt(sub)}</span><br><span class="u">tCO₂e (${subLbl})</span></span>
+      <svg class="chev" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg></span></button>
+      <div class="scope-body" id="sb${sc.id}"></div>`;
+    div.querySelector('.scope-head').onclick=()=>{openScopes.has(sc.id)?openScopes.delete(sc.id):openScopes.add(sc.id);div.classList.toggle('open');div.querySelector('.scope-head').setAttribute('aria-expanded',openScopes.has(sc.id))};
+    const body=div.querySelector('.scope-body');
+    CATS.filter(c=>c.scope===sc.id).forEach(c=>{
+      const ca=acts.filter(a=>a.cat===c.code); if(!ca.length) return;
+      const w=document.createElement('div'); w.className='subcat';
+      w.innerHTML=`<div class="subcat-head"><span class="chip"><i class="sdot" style="background:${sc.hex}"></i>${c.code}</span><span class="subcat-code">${c.name}</span><span class="subcat-en">(${c.en})</span></div><div class="tbl-wrap">${tab==='input'?inputTable(ca):calcTable(ca)}</div>`;
+      body.appendChild(w);
+    });
+    host.appendChild(div);
+  });
+  if(!host.children.length) host.innerHTML='<div class="card md-empty">ไม่พบกิจกรรมที่ค้นหา</div>';
+  bindEntry(); updateSaveInfo();
+}
+function nameCell(a){return `<td class="sticky act-name"><div class="t">${esc(a.name)}</div><div class="s">${esc(a.detail)}</div></td>`}
+function inCell(a,m,big){
+  const v=qty(a,m);
+  if(a.auto) return `<input class="in ${big?'big':''}" readonly value="${fmtQ(v)}" aria-label="${esc(a.name)} ${MONTHS_FULL[m]} (อัตโนมัติ)" title="คำนวณจาก kWh ขอบเขตที่ 2">`;
+  return `<input class="in ${big?'big':''}" type="text" inputmode="decimal" autocomplete="off" data-a="${a.id}" data-m="${m}" value="${fmtQ(v)}" placeholder="0" aria-label="${esc(a.name)} ${MONTHS_FULL[m]} (${a.unit})">`;
+}
+function fileCell(a){ if(a.auto) return '<td style="text-align:center" class="dash">ไม่ต้องแนบ</td>';
+  return `<td style="text-align:center"><label class="file-btn ${a.file?'has':''}" title="${esc(a.file||('แนบ'+a.evidence))}"><input type="file" class="sr" data-file="${a.id}"><svg width="14" height="14" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M21 12l-8.5 8.5a5 5 0 01-7-7L14 5a3.5 3.5 0 015 5l-8.5 8.5a2 2 0 01-3-3L15 8"/></svg>${a.file?esc(a.file):'แนบ'+esc(a.evidence)}</label></td>`}
+function inputTable(ca){
+  if(selMonth>=0){
+    const m=selMonth;
+    return `<table><thead><tr><th class="sticky" style="text-align:left">ข้อมูลกิจกรรม</th><th>หน่วย</th><th>ปริมาณ ${MONTHS_FULL[m]} <span style="color:var(--danger)">*</span></th><th>ค่า EF</th><th>ปริมาณ GHG (tCO₂e)</th><th>หลักฐาน</th></tr></thead><tbody>${ca.map(a=>`<tr>${nameCell(a)}<td style="text-align:center"><span class="unit-pill">${esc(a.unit)}</span></td><td style="text-align:center">${inCell(a,m,true)}<span class="err-msg" hidden></span></td><td class="num">${fmtEF(efOf(a).ef)}<div class="card-sub">${efOf(a).efUnit}</div></td><td class="num ghg-val" data-g="${a.id}:${m}">${fmt(tco2(a,m))}</td>${fileCell(a)}</tr>`).join('')}</tbody></table>`;
+  }
+  return `<table><thead><tr><th class="sticky" style="text-align:left">ข้อมูลกิจกรรม</th><th>หน่วย</th>${MONTHS.map(x=>`<th>${x}</th>`).join('')}<th>รวม</th><th>หลักฐาน</th></tr></thead><tbody>${ca.map(a=>`<tr>${nameCell(a)}<td style="text-align:center"><span class="unit-pill">${esc(a.unit)}</span></td>${MONTHS.map((_,m)=>`<td>${inCell(a,m)}</td>`).join('')}<td class="num total-cell" data-qt="${a.id}">${fmtQ(qtyTotal(a))}</td>${fileCell(a)}</tr>`).join('')}</tbody></table>`;
+}
+function calcTable(ca){
+  return `<table><thead><tr><th class="sticky" style="text-align:left">ข้อมูลกิจกรรม</th><th>หน่วย</th><th>ปริมาณรวมทั้งปี</th><th>ค่า EF<br>(kgCO₂e/หน่วย)</th><th>แหล่งอ้างอิง EF</th><th>ปริมาณก๊าซเรือนกระจก<br>(tCO₂e)</th></tr></thead><tbody>${ca.map(a=>{const e=efOf(a);return `<tr>${nameCell(a)}<td style="text-align:center"><span class="unit-pill">${esc(a.unit)}</span></td><td class="num">${fmtQ(qtyTotal(a))}</td><td><div class="ef-box"><button class="ef-btn" data-ef="${a.id}" aria-label="ค้นหาค่า EF สำหรับ ${esc(a.name)}" title="เลือก Emission Factor"><svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/></svg></button><input class="in" readonly value="${fmtEF(e.ef)}" aria-label="ค่า EF" style="border-style:solid"></div></td><td style="font-size:12px;color:var(--sub);min-width:160px">${esc(e.name)}<br>${esc(e.src)}</td><td class="num ghg-val">${fmt(tco2Total(a))}</td></tr>`}).join('')}</tbody></table>`;
+}
+function bindEntry(){
+  document.querySelectorAll('#scopeList input[data-a]').forEach(inp=>{
+    inp.oninput=()=>{
+      const a=ACT[inp.dataset.a], m=+inp.dataset.m, raw=inp.value.trim().replace(/,/g,'');
+      const err=inp.parentElement.querySelector('.err-msg');
+      if(raw!==''&&(!/^\d*\.?\d*$/.test(raw)||isNaN(+raw))){inp.classList.add('err');inp.setAttribute('aria-invalid','true');if(err){err.hidden=false;err.textContent='⚠ กรุณากรอกตัวเลขที่ไม่ติดลบ'}inp.title='กรุณากรอกตัวเลขที่ไม่ติดลบ';return}
+      inp.classList.remove('err');inp.removeAttribute('aria-invalid');inp.title='';if(err)err.hidden=true;
+      a.q[m]=raw===''?null:+raw;
+      const qt=document.querySelector(`[data-qt="${a.id}"]`); if(qt) qt.textContent=fmtQ(qtyTotal(a));
+      const g=document.querySelector(`[data-g="${a.id}:${m}"]`); if(g) g.textContent=fmt(tco2(a,m));
+      // update auto rows (upstream electricity) if visible
+      ACTS.filter(x=>x.auto===a.id).forEach(x=>{const r=document.querySelector(`input[readonly][aria-label^="${x.name}"][aria-label*="${MONTHS_FULL[m]}"]`); if(r) r.value=fmtQ(qty(x,m)); const g2=document.querySelector(`[data-g="${x.id}:${m}"]`); if(g2) g2.textContent=fmt(tco2(x,m)); const qt2=document.querySelector(`[data-qt="${x.id}"]`); if(qt2) qt2.textContent=fmtQ(qtyTotal(x));});
+      SCOPES.forEach(sc=>{const el=document.querySelector(`[data-scope-sub="${sc.id}"]`); if(el) el.textContent=fmt(selMonth>=0?scopeMonth(sc.id,selMonth):scopeTotal(sc.id))});
+      dirty=true; updateSaveInfo();
+    };
+    inp.onchange=()=>{ if(!inp.classList.contains('err')){ const v=ACT[inp.dataset.a].q[+inp.dataset.m]; inp.value=fmtQ(v); renderEntryChipsOnly(); } };
+  });
+  document.querySelectorAll('#scopeList input[data-file]').forEach(f=>f.onchange=()=>{if(f.files[0]){ACT[f.dataset.file].file=f.files[0].name;dirty=true;renderScopes()}});
+  document.querySelectorAll('#scopeList [data-ef]').forEach(b=>b.onclick=()=>openEF(b.dataset.ef,b));
+}
+function renderEntryChipsOnly(){document.querySelectorAll('#monthChips button').forEach(b=>{const m=+b.dataset.m;if(m<0)return;const has=monthHasData(m);b.innerHTML=MONTHS[m]+(has?'<i class="md"></i>':'')})}
+let dirty=false, lastSaved=null;
+function updateSaveInfo(){const el=document.getElementById('saveInfo');el.innerHTML=dirty?'<span class="badge b-warn">มีการแก้ไขที่ยังไม่บันทึก</span>':(lastSaved?`<span class="badge b-ok">บันทึกล่าสุด ${lastSaved}</span>`:'<span class="badge b-info">ข้อมูลตัวอย่าง ม.ค.–ต.ค. 2569</span>')}
+document.getElementById('saveBtn').onclick=()=>{
+  if(document.querySelector('#scopeList .in.err')){toast('มีช่องที่กรอกไม่ถูกต้อง กรุณาตรวจสอบ',true);document.querySelector('#scopeList .in.err').focus();return}
+  dirty=false; lastSaved=new Date().toLocaleString('th-TH',{dateStyle:'medium',timeStyle:'short'}); updateSaveInfo(); toast('บันทึกข้อมูลเรียบร้อยแล้ว');
+};
+function toast(msg,bad){const t=document.getElementById('toast');t.textContent=msg;t.style.background=bad?'var(--danger)':'var(--success)';t.style.display='block';clearTimeout(t._h);t._h=setTimeout(()=>t.style.display='none',2600)}
+
+/* ----- EF dialog ----- */
+let efTarget=null, efSel=null, efReturn=null;
+const ov=document.getElementById('efOverlay');
+function openEF(actId,btn){efTarget=ACT[actId];efSel=efTarget.ef;efReturn=btn;document.getElementById('efFor').textContent='สำหรับ: '+efTarget.name+' (หน่วย '+efTarget.unit+')';document.getElementById('efSearch').value='';renderEF();ov.classList.add('show');document.getElementById('efSearch').focus()}
+function closeEF(){ov.classList.remove('show');if(efReturn)efReturn.focus()}
+function renderEF(){
+  const q=document.getElementById('efSearch').value.trim().toLowerCase();
+  document.getElementById('efBody').innerHTML=SCOPES.map(sc=>{const rows=EF_LIB.filter(e=>e.scope===sc.id&&(!q||(e.name+e.unit+e.src).toLowerCase().includes(q)));if(!rows.length)return'';
+    return `<tr class="cat-row"><td colspan="5">${sc.name} (${sc.en})</td></tr>`+rows.map(e=>`<tr class="ef-row ${e.id===efSel?'sel':''}" data-id="${e.id}" tabindex="0"><td style="text-align:center"><input type="radio" name="efr" ${e.id===efSel?'checked':''} aria-label="${esc(e.name)}"></td><td>${esc(e.name)}${e.unit===efTarget.unit?' <span class="badge b-ok">หน่วยตรงกัน</span>':''}</td><td style="text-align:center">${esc(e.unit)}</td><td class="num">${fmtEF(e.ef)}</td><td style="font-size:12px;color:var(--sub)">${esc(e.src)}</td></tr>`).join('')}).join('')||'<tr><td colspan="5" class="md-empty">ไม่พบค่า EF</td></tr>';
+  document.querySelectorAll('.ef-row').forEach(r=>{const pick=()=>{efSel=r.dataset.id;renderEF()};r.onclick=pick;r.onkeydown=e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();pick()}}});
+}
+document.getElementById('efSearch').oninput=renderEF;
+document.getElementById('efClose').onclick=closeEF; document.getElementById('efCancel').onclick=closeEF;
+document.getElementById('efOk').onclick=()=>{if(efSel&&efTarget){efTarget.ef=efSel;dirty=true}closeEF();renderScopes();toast('อัปเดตค่า EF แล้ว')};
+ov.addEventListener('keydown',e=>{if(e.key==='Escape')closeEF();if(e.key==='Tab'){const f=[...ov.querySelectorAll('button,input,[tabindex="0"]')].filter(x=>x.offsetParent);const i=f.indexOf(document.activeElement);if(e.shiftKey&&i<=0){e.preventDefault();f[f.length-1].focus()}else if(!e.shiftKey&&i===f.length-1){e.preventDefault();f[0].focus()}}});
+ov.onclick=e=>{if(e.target===ov)closeEF()};
+
+/* ================= SUMMARY ================= */
+let sumView='table', collapsedRows=new Set();
+document.querySelectorAll('[data-sumview]').forEach(b=>b.onclick=()=>{sumView=b.dataset.sumview;document.querySelectorAll('[data-sumview]').forEach(x=>x.classList.toggle('on',x===b));renderSummary()});
+const sumSel=document.getElementById('sumMonth');
+sumSel.innerHTML=MONTHS_FULL.map((x,m)=>`<option value="${m}">${x} 2569</option>`).join('');
+sumSel.value=String(Math.max(0,FILLED_MONTHS-1)); sumSel.onchange=renderMonthDetail;
+function renderSummary(){
+  const s=[1,2,3].map(scopeTotal), T=s[0]+s[1]+s[2];
+  const rows=[['ขอบเขตที่ 1 (Scope 1)',s[0],SCOPES[0].hex],['ขอบเขตที่ 2 (Scope 2)',s[1],SCOPES[1].hex],['ขอบเขตที่ 3 (Scope 3)',s[2],SCOPES[2].hex],['ขอบเขตที่ 1+2',s[0]+s[1]],['ขอบเขตที่ 1+2+3 (รวมทั้งหมด)',T]];
+  document.getElementById('sumTable').innerHTML=`<div class="tbl-wrap"><table><thead><tr><th style="text-align:left">ขอบเขต</th><th style="text-align:right">ปริมาณ GHGs (tCO₂e)</th><th style="text-align:right">สัดส่วน (%)</th></tr></thead><tbody>${rows.map((r,i)=>`<tr class="${i>=3?'sum-row':''}"><td>${r[2]?`<i class="sw" style="background:${r[2]};margin-right:8px;vertical-align:-1px"></i>`:''}${r[0]}</td><td class="num ghg-val">${fmt(r[1])}</td><td class="num">${fmt(r[1]/T*100,1)}</td></tr>`).join('')}</tbody></table></div>`;
+  document.getElementById('sumTable').style.display=sumView==='table'?'block':'none';
+  document.getElementById('sumChart').style.display=sumView==='chart'?'block':'none';
+  if(sumView==='chart') stackedBar(document.getElementById('sumBar'),['ขอบเขตที่ 1','ขอบเขตที่ 2','ขอบเขตที่ 3'],SCOPES.map((sc,i)=>({name:sc.name,hex:sc.hex,tipc:i===0?'#7FA6F5':sc.hex,values:[0,1,2].map(j=>j===i?s[i]:0)})));
+  // monthly matrix
+  let h=`<table><thead><tr><th class="sticky" style="text-align:left;min-width:260px">ขอบเขต / รายการ</th>${MONTHS.map(x=>`<th>${x}</th>`).join('')}<th>รวม</th></tr></thead><tbody>`;
+  SCOPES.forEach(sc=>{
+    const col=collapsedRows.has(sc.id);
+    h+=`<tr class="scope-row ${col?'collapsed':''}" style="background:${sc.hex}0F"><td class="sticky" style="background:#fff;box-shadow:inset 4px 0 0 ${sc.hex}"><button class="exp-btn" data-exp="${sc.id}" aria-expanded="${!col}"><svg class="chev" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"/></svg><i class="sdot" style="background:${sc.hex}"></i><span>${sc.name}</span> <span class="card-sub" style="font-weight:500">(${actsOfScope(sc.id).length} รายการ)</span></button></td>${MONTHS.map((_,m)=>{const v=scopeMonth(sc.id,m);return `<td class="num" style="font-weight:600">${v?fmt(v):'<span class="dash">–</span>'}</td>`}).join('')}<td class="num" style="font-weight:600;background:#fff">${fmt(scopeTotal(sc.id))}</td></tr>`;
+    if(!col) CATS.filter(c=>c.scope===sc.id).forEach(c=>{
+      h+=`<tr class="cat-row"><td class="sticky" style="padding-left:36px;background:#F8FAFC">${c.code} ${c.name}</td><td colspan="12"></td><td></td></tr>`;
+      ACTS.filter(a=>a.cat===c.code).forEach(a=>{h+=`<tr class="child-row"><td class="sticky" style="padding-left:52px;font-size:14px">${esc(a.name)}<div class="card-sub" style="font-size:12px">${esc(a.unit)} × ${fmtEF(efOf(a).ef)} ${esc(efOf(a).efUnit)}</div></td>${MONTHS.map((_,m)=>{const v=tco2(a,m);return `<td class="num" style="font-size:14px">${v?fmt(v):'<span class="dash">–</span>'}</td>`}).join('')}<td class="num total-cell">${fmt(tco2Total(a))}</td></tr>`});
+    });
+  });
+  h+=`<tr class="sum-row"><td class="sticky" style="background:var(--info-bg)">รวมทุกขอบเขต (1+2+3)</td>${MONTHS.map((_,m)=>{const v=[1,2,3].reduce((t,sc)=>t+scopeMonth(sc,m),0);return `<td class="num">${v?fmt(v):'<span class="dash">–</span>'}</td>`}).join('')}<td class="num">${fmt(T)}</td></tr></tbody></table>`;
+  const mm=document.getElementById('monthlyMatrix'); mm.innerHTML=h;
+  mm.querySelectorAll('[data-exp]').forEach(b=>b.onclick=()=>{const id=+b.dataset.exp;collapsedRows.has(id)?collapsedRows.delete(id):collapsedRows.add(id);renderSummary()});
+  renderMonthDetail();
+}
+function renderMonthDetail(){
+  const m=+sumSel.value;
+  document.getElementById('monthDetail').innerHTML=SCOPES.map(sc=>{
+    const items=actsOfScope(sc.id).filter(a=>(+qty(a,m)||0)>0);
+    return `<div class="md-card" style="border-top:4px solid ${sc.hex}"><div class="md-card-head"><span><b><i class="sdot" style="background:${sc.hex};margin-right:8px"></i>${sc.name}</b><br><span class="m">${MONTHS_FULL[m]} · ${items.length} รายการ</span></span><span class="v">${fmt(scopeMonth(sc.id,m))}<span style="font-size:12px;font-weight:500;color:var(--sub)"> tCO₂e</span></span></div>
+    <div class="md-list">${items.length?items.map(a=>`<div class="md-item"><div><div>${esc(a.name)}</div><div class="q">${CATS.find(c=>c.code===a.cat).code} · ปริมาณ ${fmtQ(qty(a,m))} ${esc(a.unit)}</div></div><div class="t">${fmt(tco2(a,m))}</div></div>`).join(''):`<div class="md-empty">ยังไม่มีข้อมูลในเดือนนี้</div>`}</div></div>`}).join('');
+}
+
+/* ================= CSV DOWNLOAD ================= */
+document.getElementById('dlBtn').onclick=()=>{
+  const c=v=>{const s=v===null||v===undefined?'':String(v);return /[",\n]/.test(s)?'"'+s.replace(/"/g,'""')+'"':s};
+  const n=(v,d=4)=>v===null||v===''||isNaN(v)?'':(+v).toFixed(d);
+  const L=[]; const row=a=>L.push(a.map(c).join(','));
+  const s=[1,2,3].map(scopeTotal), T=s[0]+s[1]+s[2];
+  row(['รายงานสรุปผลการปล่อยก๊าซเรือนกระจกขององค์กร (CFO)']);
+  row(['องค์กร','โรงพยาบาลกรุงเทพ (Bangkok Hospital)']);
+  row(['ปีที่รายงาน / ปีฐาน','พ.ศ. 2569 (ค.ศ. 2026)']);
+  row(['มาตรฐานอ้างอิง','TGO CFO Guidelines / IPCC AR5 / ISO 14064-1']);
+  row(['วันที่ดาวน์โหลด',new Date().toLocaleString('th-TH')]);
+  L.push('');
+  row(['ส่วนที่ 1: สรุปปริมาณการปล่อยก๊าซเรือนกระจกตามขอบเขต']);
+  row(['ขอบเขต','ปริมาณ GHGs (tCO2e)','สัดส่วน (%)']);
+  [['ขอบเขตที่ 1 (Scope 1)',s[0]],['ขอบเขตที่ 2 (Scope 2)',s[1]],['ขอบเขตที่ 3 (Scope 3)',s[2]],['ขอบเขตที่ 1+2',s[0]+s[1]],['ขอบเขตที่ 1+2+3',T]].forEach(r=>row([r[0],n(r[1]),n(r[1]/T*100,2)]));
+  L.push('');
+  row(['ส่วนที่ 2: สรุปรายเดือนแยกตามขอบเขตและรายการ (tCO2e)']);
+  row(['ขอบเขต','หมวด','รายการ',...MONTHS,'รวม']);
+  SCOPES.forEach(sc=>{
+    row([sc.name,'','รวม '+sc.name,...MONTHS.map((_,m)=>n(scopeMonth(sc.id,m))),n(scopeTotal(sc.id))]);
+    actsOfScope(sc.id).forEach(a=>{const cat=CATS.find(x=>x.code===a.cat);row([sc.name,cat.code+' '+cat.name,a.name,...MONTHS.map((_,m)=>n(tco2(a,m))),n(tco2Total(a))])});
+  });
+  row(['รวมทุกขอบเขต','','',...MONTHS.map((_,m)=>n([1,2,3].reduce((t,x)=>t+scopeMonth(x,m),0))),n(T)]);
+  L.push('');
+  row(['ส่วนที่ 3: ข้อมูลบัญชีรายการก๊าซเรือนกระจก (GHG Inventory – Fr-04) ที่กรอก']);
+  row(['ขอบเขต','หมวด','รหัสตัวแปร','ข้อมูลกิจกรรม','รายละเอียดแหล่งปล่อย','หน่วย',...MONTHS.map(x=>'ปริมาณ '+x),'ปริมาณรวม','ค่า EF','หน่วย EF','ชื่อ EF ที่เลือก','แหล่งอ้างอิง EF','สูตรคำนวณ','ปริมาณ GHGs (tCO2e)','หลักฐานที่แนบ']);
+  ACTS.forEach(a=>{const cat=CATS.find(x=>x.code===a.cat),e=efOf(a);
+    row([SCOPES[cat.scope-1].name,cat.code+' '+cat.name,a.id,a.name,a.detail,a.unit,...MONTHS.map((_,m)=>{const v=qty(a,m);return v===null||v===''?'':v}),n(qtyTotal(a),2),e.ef,e.efUnit,e.name,e.src,a.auto?'kWh (ขอบเขตที่ 2) × EF ÷ 1000':'ปริมาณ × EF ÷ 1000',n(tco2Total(a)),a.auto?'คำนวณอัตโนมัติ':(a.file||'ยังไม่แนบ')]);
+  });
+  const blob=new Blob(['﻿'+L.join('\r\n')],{type:'text/csv;charset=utf-8'});
+  const url=URL.createObjectURL(blob); const a=document.createElement('a'); a.href=url; a.download='CFO_สรุปผล_BangkokHospital_2569.csv'; document.body.appendChild(a); a.click(); a.remove(); setTimeout(()=>URL.revokeObjectURL(url),1000);
+  toast('ดาวน์โหลดไฟล์ CSV แล้ว');
+};
+
+addEventListener('resize',()=>{const p=document.querySelector('.page.active').id.replace('page-','');if(p!=='entry')render(p)});
+document.getElementById('topDate').textContent=new Date().toLocaleDateString('th-TH',{day:'numeric',month:'short',year:'numeric'});
+const THEME=document.body.dataset.theme;
+renderDash();
+</script>
+</body>
+</html>
